@@ -11,9 +11,9 @@ class AGREE(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        #self.attention = AttentionLayer(2 * embedding_dim, drop_ratio)
+        self.attention = ConcatAttentionLayer(2 * embedding_dim, drop_ratio)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        self.attention = BilinearAttentionLayer(embedding_dim, embedding_dim, 1)
+        #self.attention = AttentionLayer(embedding_dim, embedding_dim, 1)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
@@ -46,10 +46,10 @@ class AGREE(nn.Module):
                 items_numb.append(j)
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
             #element_embeds = torch.mul(group_embeds, item_embeds_full)
-            prod_embeds = torch.mul(members_embeds, item_embeds)
-            #group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
-            at_wt = self.attention(members_embeds, item_embeds)
-            #at_wt = self.attention(group_item_embeds) #getting weights
+            #prod_embeds = torch.mul(members_embeds, item_embeds)
+            group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
+            #at_wt = self.attention(members_embeds, item_embeds)
+            at_wt = self.attention(group_item_embeds) #getting weights
             #using the ouput
             g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
             group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
@@ -119,23 +119,23 @@ class GroupEmbeddingLayer(nn.Module):
         return group_embeds
 
 
-# attention layer
-# class AttentionLayer(nn.Module):
-#     def __init__(self, embedding_dim, drop_ratio=0):
-#         super(AttentionLayer, self).__init__()
-#         self.linear = nn.Sequential(
-#             nn.Linear(embedding_dim, 16),
-#             nn.ReLU(),
-#             nn.Dropout(drop_ratio),
-#             nn.Linear(16, 1)
-#         )
-#
-#     def forward(self, x):
-#         out = self.linear(x)
-#         weight = F.softmax(out.view(1, -1), dim=1)
-#         return weight
+class ConcatAttentionLayer(nn.Module):
+    def __init__(self, embedding_dim, drop_ratio=0):
+        super(ConcatAttentionLayer, self).__init__()
+        self.linear = nn.Sequential(
+            nn.Linear(embedding_dim, 16),
+            nn.ReLU(),
+            nn.Dropout(drop_ratio),
+            nn.Linear(16, 1)
+        )
+
+    def forward(self, x):
+        out = self.linear(x)
+        weight = F.softmax(out.view(1, -1), dim=1)
+        return weight
 
 class BilinearAttentionLayer(nn.Module):
+    #Luong Style Attention.
 
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
         super(BilinearAttentionLayer, self).__init__()
