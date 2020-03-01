@@ -13,7 +13,7 @@ class AGREE(nn.Module):
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         #self.attention = AttentionLayer(2 * embedding_dim, drop_ratio)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        self.attention = AttentionLayer(embedding_dim, embedding_dim, 1)
+        self.attention = BilinearAttentionLayer(embedding_dim, embedding_dim, 1)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
@@ -135,9 +135,10 @@ class GroupEmbeddingLayer(nn.Module):
 #         weight = F.softmax(out.view(1, -1), dim=1)
 #         return weight
 
-class AttentionLayer(nn.Module):
+class BilinearAttentionLayer(nn.Module):
+
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
-        super(AttentionLayer, self).__init__()
+        super(BilinearAttentionLayer, self).__init__()
         self.bilinear = nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
 
 
@@ -160,27 +161,3 @@ class PredictLayer(nn.Module):
     def forward(self, x):
         out = self.linear(x)
         return out
-
-
-
-
-# class Autoencoder(nn.Module):
-#     def __init__(self):
-#         super(Autoencoder,self).__init__()
-
-#         self.encoder = nn.Sequential(
-#             nn.Linear(18, 4),
-#             nn.ReLU(),
-#             nn.Dropout(drop_ratio)
-#         )
-
-#         self.decoder = nn.Sequential(
-#             nn.Linear(4, 18),
-#             nn.ReLU(),
-#             nn.Dropout(drop_ratio)
-#         )
-
-#     def forward(self,x):
-#         x = self.encoder(x)
-#         x = self.decoder(x)
-#         return x

@@ -22,9 +22,9 @@ def training(model, train_loader, epoch_id, config, type_m):
         lr = learning_rates[1]
     elif epoch_id >=20:
         lr = learning_rates[2]
-    # lr decay
-    if epoch_id % 5 == 0:
-        lr /= 2
+    # # lr decay
+    # if epoch_id % 5 == 0:
+    #     lr /= 2
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
@@ -46,7 +46,8 @@ def training(model, train_loader, epoch_id, config, type_m):
         # Loss
         d_r = r.double()
         d_r = d_r/5
-        loss = torch.mean((pos_prediction-d_r) **2)
+        #print(pos_prediction)
+        loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
         total_loss+=loss
         counter+=1
         # record loss history
@@ -97,7 +98,7 @@ if __name__ == '__main__':
         agree.train()
         t1 = time()
         #training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
-        print("User training complete.")
+        #print("User training complete.")
         training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
         print("User and Group training time is: [%.1f s]" % (time()-t1))
     print("Done!")

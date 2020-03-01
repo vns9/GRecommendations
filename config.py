@@ -8,7 +8,7 @@ class Config(object):
         self.embedding_size = 32
         self.epoch = 30
         self.num_negatives = 6
-        self.batch_size = 256
-        self.lr = [0.000005, 0.000001, 0.0000005]
+        self.batch_size = 10036
+        self.lr = [0.001, 0.001, 0.001]
         self.drop_ratio = 0.2
         self.topK = 5
