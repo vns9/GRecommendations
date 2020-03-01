@@ -37,6 +37,7 @@ class AGREE(nn.Module):
     # group forward
     def grp_forward(self, group_inputs, item_inputs):
         group_embeds = Variable(torch.Tensor())
+        all_item_embeds = Variable(torch.Tensor())
         item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
         for i, j in zip(group_inputs, item_inputs):
             members = self.group_member_dict[int(i)]
@@ -47,21 +48,25 @@ class AGREE(nn.Module):
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
             #element_embeds = torch.mul(group_embeds, item_embeds_full)
             #prod_embeds = torch.mul(members_embeds, item_embeds)
-            group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
+            #group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
             #at_wt = self.attention(members_embeds, item_embeds)
-            at_wt = self.attention(group_item_embeds) #getting weights
+            #at_wt = self.attention(group_item_embeds) #getting weights
             #using the ouput
-            g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
-            group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
+            #g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
+            #group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
             #add common group embedding
-            g_embeds = g_embeds_with_attention + group_embeds_pure
-            if group_embeds.dim() == 0:
-                group_embeds = g_embeds
+            #g_embeds = g_embeds_with_attention + group_embeds_pure
+            if all_item_embeds.dim() == 0:
+                all_item_embeds = item_embeds
             else:
-                group_embeds = torch.cat((group_embeds, g_embeds))
+                all_item_embeds = torch.cat((all_item_embeds, item_embeds))
+            if group_embeds.dim() == 0:
+                group_embeds = members_embeds
+            else:
+                group_embeds = torch.cat((group_embeds, members_embeds))#torch.cat((group_embeds, g_embeds))
 
-        element_embeds = torch.mul(group_embeds, item_embeds_full)  # Element-wise product
-        new_embeds = torch.cat((element_embeds, group_embeds, item_embeds_full), dim=1)
+        element_embeds = torch.mul(group_embeds, all_item_embeds)#, item_embeds_full)  # Element-wise product
+        new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
 
