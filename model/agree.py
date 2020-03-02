@@ -11,7 +11,7 @@ class AGREE(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        self.attention = ConcatAttentionLayer(2 * embedding_dim, drop_ratio)
+        self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
         #self.attention = AttentionLayer(embedding_dim, embedding_dim, 1)
         self.group_member_dict = group_member_dict
@@ -36,7 +36,9 @@ class AGREE(nn.Module):
 
     # group forward
     def grp_forward(self, group_inputs, item_inputs):
-        # NO ATTENTION #
+
+        # NO ATTENTION # 
+        '''
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
@@ -77,7 +79,43 @@ class AGREE(nn.Module):
         element_embeds = torch.mul(group_embeds, all_item_embeds)#, item_embeds_full)  # Element-wise product
         new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
+        return y 
+        '''
+
+
+
+        # LUONG STYLE ATTENTION #
+        '''
+        group_embeds = Variable(torch.Tensor())
+        gm_embeddings = Variable(torch.Tensor())
+        all_item_embeds = Variable(torch.Tensor())
+        at_wt = []
+        item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
+        for i, j in zip(group_inputs, item_inputs):
+            members = self.group_member_dict[int(i)]
+            members_embeds = self.userembeds(Variable(torch.LongTensor(members)))
+            items_numb = []
+            items_numb.append(j)
+            item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
+            for member in members_embeds:
+                xmember = member.view(1,member.shape[0])
+                at_wt.append(self.attention(xmember, item_embeds))
+            final_user = torch.zeros([32])
+            i=0
+            for member in members_embeds:
+                final_user = torch.add(at_wt[i]*member, final_user)
+            if all_item_embeds.dim() == 0:
+                all_item_embeds = item_embeds
+            else:
+                all_item_embeds = torch.cat((all_item_embeds, item_embeds))
+            if group_embeds.dim() == 0:
+                group_embeds = final_user
+            else:
+                group_embeds = torch.cat((group_embeds, final_user))
+        element_embeds = torch.mul(group_embeds, all_item_embeds)
+        y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
+        '''
 
 
         
@@ -152,7 +190,6 @@ class ConcatAttentionLayer(nn.Module):
         return weight
 
 class BilinearAttentionLayer(nn.Module):
-    #Luong Style Attention.
 
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
         super(BilinearAttentionLayer, self).__init__()
