@@ -229,7 +229,7 @@ class ConcatAttentionLayer(nn.Module):
             nn.Linear(embedding_dim, 16),
             nn.ReLU(),
             nn.Dropout(drop_ratio),
-            nn.Linear(16, 1)
+            nn.Linear(16, 3)
         )
 
     def forward(self, x):
