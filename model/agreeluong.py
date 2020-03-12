@@ -85,7 +85,7 @@ class AGREE(nn.Module):
 
 
         # LUONG STYLE ATTENTION #
-        '''
+        
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
@@ -115,7 +115,7 @@ class AGREE(nn.Module):
         element_embeds = torch.mul(group_embeds, all_item_embeds)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
-        '''
+        
 
 
         
