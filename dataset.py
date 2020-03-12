@@ -15,7 +15,7 @@ class GDataset(object):
         self.num_users, self.num_items = self.user_trainMatrix.shape
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
-        self.group_trainMatrix = self.load_rating_file_as_matrix(group_path + "Train1.txt")
+        self.group_trainMatrix = self.load_rating_file_as_matrix(group_path + "Train.txt")
 
     
     def load_genre_file_as_tensors(self, filename):
