@@ -97,7 +97,7 @@ if __name__ == '__main__':
     for epoch in range(config.epoch):
         agree.train()
         t1 = time()
-        #training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
+        training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
         #print("User training complete.")
         training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
         print("User and Group training time is: %.1f s" % (time()-t1))
