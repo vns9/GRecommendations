@@ -11,9 +11,9 @@ class AGREE(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
+        #self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        #self.attention = AttentionLayer(embedding_dim, embedding_dim, 1)
+        self.attention = ConcatAttentionLayer( embedding_dim * 4)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
