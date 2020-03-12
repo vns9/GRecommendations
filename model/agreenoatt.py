@@ -38,7 +38,7 @@ class AGREE(nn.Module):
     def grp_forward(self, group_inputs, item_inputs):
 
         # NO ATTENTION # 
-        '''
+        
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
@@ -80,7 +80,7 @@ class AGREE(nn.Module):
         new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y 
-        '''
+        
 
 
 
