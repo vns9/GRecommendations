@@ -16,6 +16,7 @@ class GDataset(object):
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
         self.group_trainMatrix = self.load_rating_file_as_matrix(group_path + "Train.txt")
+        self.group_testMatrix = self.load_rating_file_as_matrix(group_path + "Test.txt")
 
     
     def load_genre_file_as_tensors(self, filename):
@@ -106,3 +107,11 @@ class GDataset(object):
         train_data = TensorDataset(torch.LongTensor(group), torch.LongTensor(pos_item_input), torch.LongTensor(ratings))
         group_train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         return group_train_loader
+
+    def get_group_test_dataloader(self, batch_size):
+        group = self.get_train_instances(self.group_testMatrix)[0]
+        pos_item_input = self.get_train_instances(self.group_testMatrix)[1]
+        ratings = self.get_train_instances(self.group_testMatrix)[2]
+        test_data = TensorDataset(torch.LongTensor(group), torch.LongTensor(pos_item_input), torch.LongTensor(ratings))
+        group_test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
+        return group_test_loader
