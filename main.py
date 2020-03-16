@@ -14,17 +14,14 @@ from dataset import GDataset
 
 # train the model
 def training(model, train_loader, epoch_id, config, type_m):
-    # user trainning
+    # user training
     learning_rates = config.lr
     # learning rate decay
     lr = learning_rates[0]
     if epoch_id >= 15 and epoch_id < 25:
-        lr = learning_rates[1]
+        lr = learning_rates[0]
     elif epoch_id >=20:
-        lr = learning_rates[2]
-    # # lr decay
-    # if epoch_id % 5 == 0:
-    #     lr /= 2
+        lr = learning_rates[0]
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
@@ -56,49 +53,72 @@ def training(model, train_loader, epoch_id, config, type_m):
         loss.backward()
         optimizer.step()
 
+    print("Training epoch id : "),
+    print(epoch_id)
     print("Loss : "),
     print(total_loss.item()/counter)
-    print("Epoch id : "),
+    
+
+# test the model
+def testing(model, train_loader, epoch_id, config, type_m):
+    
+    total_loss=0
+    counter=0
+    losses = []
+    for batch_id, (u, pi_ni, r) in enumerate(train_loader):
+        # Data Load
+        user_input = u
+        pos_item_input = pi_ni
+        # Forward
+        if type_m == 'user':
+            pos_prediction = model(None, user_input, pos_item_input)
+        elif type_m == 'group':
+            pos_prediction = model(user_input, None, pos_item_input)
+        loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
+        total_loss+=loss
+        counter+=1
+
+    print("Testing epoch id : "),
     print(epoch_id)
+    print("Loss : "),
+    print(total_loss.item()/counter)
+    
 
-
-
-# def evaluation(model, helper, testRatings, testNegatives, K, type_m):
-#     model.eval()
-#     (hits, ndcgs) = helper.evaluate_model(model, testRatings, testNegatives, K, type_m)
-#     hr, ndcg = np.array(hits).mean(), np.array(ndcgs).mean()
-#     return hr, ndcg
 
 
 if __name__ == '__main__':
-    # initial parameter class
     config = Config()
 
-    # initial helper
     helper = Helper()
 
-    # get the dict of users in group
     g_m_d = helper.gen_group_member_dict(config.user_in_group_path)
 
-    # initial dataSet class
     dataset = GDataset(config.user_dataset, config.group_dataset, config.num_negatives)
 
-    # get group number
     num_group = len(g_m_d)
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
 
-    # build AGREE model
+    # build model
     agree = AGREE(num_users, num_items, num_group, config.embedding_size, g_m_d, config.drop_ratio, genres)
 
-    # config information
-    print("Model training at embedding size %d, run Iteration:%d" %(config.embedding_size, config.epoch))
-    # train the model
+    
+    print("Model training at embedding size %d, number of epochs:%d" %(config.embedding_size, config.epoch))
     for epoch in range(config.epoch):
         agree.train()
         t1 = time()
         training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
-        #print("User training complete.")
+        print("User training time %.1f s\n" % (time()-t1))
         training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
-        print("User and Group training time is: %.1f s" % (time()-t1))
-    print("Done!")
+        print("User and Group training time %.1f s\n" % (time()-t1))
+
+    print("Model testing at embedding size %d, number of epochs:%d" %(config.embedding_size, config.test_epoch))
+    for epoch in range(config.epoch):
+        agree.train()
+        t1 = time()
+        testing(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
+        print("User testing time %.1f s\n" % (time()-t1))
+        testing(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
+        print("User and Group testing time %.1f s\n" % (time()-t1))
+    
+    print("Done.")

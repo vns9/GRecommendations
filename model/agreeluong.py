@@ -13,7 +13,6 @@ class AGREE(nn.Module):
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        #self.attention = AttentionLayer(embedding_dim, embedding_dim, 1)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
@@ -82,8 +81,6 @@ class AGREE(nn.Module):
         return y 
         '''
 
-
-
         # LUONG STYLE ATTENTION #
         
         group_embeds = Variable(torch.Tensor())
@@ -116,10 +113,6 @@ class AGREE(nn.Module):
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
         
-
-
-        
-
     # user forward
     def usr_forward(self, user_inputs, item_inputs):
         user_inputs_var, item_inputs_var = Variable(user_inputs), Variable(item_inputs)

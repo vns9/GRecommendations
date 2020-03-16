@@ -1,2 +1,1 @@
-- Code for Stream Project.
-- Group Recommendation Systems using Attention Mechanism and Neural Networks.
+Implementation of Group Recommendation System using Attention Mechanism and Neural Networks.

@@ -11,9 +11,8 @@ class AGREE(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        #self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        self.attention = ConcatAttentionLayer( embedding_dim * 4)
+        self.attention = ConcatAttentionLayer( embedding_dim * 4) # 3 Members in a group
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
@@ -84,7 +83,6 @@ class AGREE(nn.Module):
 
         # BAHDANAU STYLE ATTENTION #
         
-        
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
@@ -133,7 +131,7 @@ class AGREE(nn.Module):
         
 
         # LUONG STYLE ATTENTION #
-        
+        '''
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
@@ -163,7 +161,7 @@ class AGREE(nn.Module):
         element_embeds = torch.mul(group_embeds, all_item_embeds)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
-        
+        '''
 
 
         
@@ -229,7 +227,7 @@ class ConcatAttentionLayer(nn.Module):
             nn.Linear(embedding_dim, 16),
             nn.ReLU(),
             nn.Dropout(drop_ratio),
-            nn.Linear(16, 3)
+            nn.Linear(16, 3) # generate 3 weights
         )
 
     def forward(self, x):
@@ -237,17 +235,17 @@ class ConcatAttentionLayer(nn.Module):
         weight = F.softmax(out.view(1, -1), dim=1)
         return weight
 
-class BilinearAttentionLayer(nn.Module):
+# class BilinearAttentionLayer(nn.Module):
 
-    def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
-        super(BilinearAttentionLayer, self).__init__()
-        self.bilinear = nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
+#     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
+#         super(BilinearAttentionLayer, self).__init__()
+#         self.bilinear = nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
 
 
-    def forward(self, x, y):
-        out = self.bilinear(x,y)
-        weight = F.softmax(out.view(1, -1), dim=1)
-        return weight
+#     def forward(self, x, y):
+#         out = self.bilinear(x,y)
+#         weight = F.softmax(out.view(1, -1), dim=1)
+#         return weight
 
 
 class PredictLayer(nn.Module):
