@@ -110,6 +110,7 @@ class AGREE(nn.Module):
             else:
                 group_embeds = torch.cat((group_embeds, final_user))
         element_embeds = torch.mul(group_embeds, all_item_embeds)
+        new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
         
