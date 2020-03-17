@@ -11,6 +11,6 @@ class Config(object):
         self.num_negatives = 6
         self.batch_size = 10036
         self.test_batch_size = 10036
-        self.lr = [0.00005, 0.0001, 0.00005]
+        self.lr = [0.005, 0.005, 0.005]
         self.drop_ratio = 0.2
         self.topK = 5
