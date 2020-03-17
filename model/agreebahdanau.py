@@ -111,20 +111,20 @@ class AGREE(nn.Module):
             #group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
             #add common group embedding
             #g_embeds = g_embeds_with_attention + group_embeds_pure
-        #     if all_item_embeds.dim() == 0:
-        #         all_item_embeds = item_embeds
-        #     else:
-        #         all_item_embeds = torch.cat((all_item_embeds, item_embeds))
-        #     if group_embeds.dim() == 0:
-        #         group_embeds = gm_embeddings
-        #     else:
-        #         group_embeds = torch.cat((group_embeds, gm_embeddings))#torch.cat((group_embeds, g_embeds))
+            if all_item_embeds.dim() == 0:
+                all_item_embeds = item_embeds
+            else:
+                all_item_embeds = torch.cat((all_item_embeds, item_embeds))
+            if group_embeds.dim() == 0:
+                group_embeds = g_embeds_with_attention
+            else:
+                group_embeds = torch.cat((group_embeds, g_embeds_with_attention))#torch.cat((group_embeds, g_embeds))
         # print(g_embeds_with_attention.size())
         # print("----")
         # print(item_embeds.size())
         # print("-----")
-        element_embeds = torch.mul(g_embeds_with_attention, item_embeds)#, item_embeds_full)  # Element-wise product
-        new_embeds = torch.cat((element_embeds, g_embeds_with_attention, item_embeds), dim=1)
+        element_embeds = torch.mul(group_embeds, all_item_embeds)#, item_embeds_full)  # Element-wise product
+        new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y 
         
