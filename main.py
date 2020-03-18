@@ -10,7 +10,7 @@ from time import time
 from config import Config
 from utils.util import Helper
 from dataset import GDataset
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 loss_list = list()
 epoch_list = list()
@@ -113,13 +113,14 @@ if __name__ == '__main__':
         t1 = time()
         training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
         training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
-        plt.plot(loss_list, epoch_list)
-        plt.xlabel('epoch')
-        plt.ylabel('RMS Loss')
-        plt.ylim(0,1)
-        plt.xlim(0,config.epoch)
-        plt.savefig('Loss-Epoch.png')
+        # plt.plot(loss_list, epoch_list)
+        # plt.xlabel('epoch')
+        # plt.ylabel('RMS Loss')
+        # plt.ylim(0,1)
+        # plt.xlim(0,config.epoch)
+        # plt.savefig('Loss-Epoch.png')
         print("User and Group training time %.1f s\n" % (time()-t1))
+    print(loss_list)
 
     print("Model testing at embedding size %d, number of epochs:%d" %(config.embedding_size, config.test_epoch))
     for epoch in range(config.test_epoch):
