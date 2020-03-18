@@ -12,7 +12,7 @@ class AGREE(nn.Module):
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        self.attention = ConcatAttentionLayer( embedding_dim * 4) # 3 Members in a group
+        self.attention = ConcatAttentionLayer( embedding_dim * 4) # 3 Members in a group and an item / movie.
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)

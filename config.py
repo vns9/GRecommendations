@@ -1,4 +1,3 @@
-
 class Config(object):
     def __init__(self):
         self.path = './data/CAMRa2011/'

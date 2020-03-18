@@ -28,7 +28,6 @@ def training(model, train_loader, epoch_id, config, type_m):
 
     total_loss=0
     counter=0
-    losses = []
     for batch_id, (u, pi_ni, r) in enumerate(train_loader):
         # Data Load
         user_input = u
@@ -47,8 +46,6 @@ def training(model, train_loader, epoch_id, config, type_m):
         loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
         total_loss+=loss
         counter+=1
-        # record loss history
-        losses.append(loss)
         # Backward
         loss.backward()
         optimizer.step()
@@ -89,6 +86,7 @@ def testing(model, train_loader, epoch_id, config, type_m):
 
 
 if __name__ == '__main__':
+
     config = Config()
 
     helper = Helper()
