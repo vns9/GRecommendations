@@ -56,8 +56,10 @@ def training(model, train_loader, epoch_id, config, type_m):
     print(epoch_id)
     print("Loss : "),
     print(total_loss.item()/counter)
-    loss_list.append(total_loss.item()/counter)
-    epoch_list.append(epoch_id)
+    
+    if(type_m=='group'):
+        loss_list.append(total_loss.item()/counter)
+        epoch_list.append(epoch_id)
     
 
 # test the model
@@ -113,13 +115,8 @@ if __name__ == '__main__':
         t1 = time()
         training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
         training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
-        # plt.plot(loss_list, epoch_list)
-        # plt.xlabel('epoch')
-        # plt.ylabel('RMS Loss')
-        # plt.ylim(0,1)
-        # plt.xlim(0,config.epoch)
-        # plt.savefig('Loss-Epoch.png')
         print("User and Group training time %.1f s\n" % (time()-t1))
+    
     print(loss_list)
 
     print("Model testing at embedding size %d, number of epochs:%d" %(config.embedding_size, config.test_epoch))
