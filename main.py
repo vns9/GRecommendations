@@ -114,15 +114,16 @@ if __name__ == '__main__':
         agree.train()
         t1 = time()
         training(agree, dataset.get_user_dataloader(config.batch_size), epoch, config, 'user')
-        training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
+        #training(agree, dataset.get_group_dataloader(config.batch_size), epoch, config, 'group')
         print("User and Group training time %.1f s\n" % (time()-t1))
     
-    print(loss_list)
+    #print(loss_list) #testing cold items
 
     print("Model testing at embedding size %d, number of epochs:%d" %(config.embedding_size, config.test_epoch))
     for epoch in range(config.test_epoch):
         t1 = time()
-        testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'group')
-        print("Group testing time %.1f s\n" % (time()-t1))
+        testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'user')
+        #testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'group')
+        print("User testing time %.1f s\n" % (time()-t1))
     
     print("Done.")

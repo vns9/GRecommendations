@@ -11,7 +11,8 @@ class GDataset(object):
         '''
         self.num_negatives = num_negatives
         # user data
-        self.user_trainMatrix = self.load_rating_file_as_matrix(user_path + "3.txt")
+        self.user_trainMatrix = self.load_rating_file_as_matrix(user_path + "ctrain.txt")
+        self.user_testMatrix = self.load_rating_file_as_matrix(user_path + "ctest.txt")
         self.num_users, self.num_items = self.user_trainMatrix.shape
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
