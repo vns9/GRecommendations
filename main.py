@@ -122,7 +122,7 @@ if __name__ == '__main__':
     print("Model testing at embedding size %d, number of epochs:%d" %(config.embedding_size, config.test_epoch))
     for epoch in range(config.test_epoch):
         t1 = time()
-        testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'user')
+        testing(agree, dataset.get_user_test_dataloader(config.batch_size), epoch, config, 'user')
         #testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'group')
         print("User testing time %.1f s\n" % (time()-t1))
     
