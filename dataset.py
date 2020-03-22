@@ -101,6 +101,14 @@ class GDataset(object):
         user_train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
         return user_train_loader
 
+    def get_user_test_dataloader(self, batch_size):
+        user = self.get_train_instances(self.user_testMatrix)[0]
+        pos_item_input = self.get_train_instances(self.user_testMatrix)[1]
+        ratings = self.get_train_instances(self.user_testMatrix)[2]
+        test_data = TensorDataset(torch.LongTensor(user), torch.LongTensor(pos_item_input), torch.LongTensor(ratings))
+        user_test_loader = DataLoader(test_data, batch_size=batch_size, shuffle=True)
+        return user_test_loader
+
     def get_group_dataloader(self, batch_size):
         group = self.get_train_instances(self.group_trainMatrix)[0]
         pos_item_input = self.get_train_instances(self.group_trainMatrix)[1]
