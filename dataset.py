@@ -13,7 +13,8 @@ class GDataset(object):
         # user data
         self.user_trainMatrix = self.load_rating_file_as_matrix(user_path + "ctrain.txt")
         self.user_testMatrix = self.load_rating_file_as_matrix(user_path + "ctest.txt")
-        self.num_users, self.num_items = self.user_trainMatrix.shape
+        self.user_Matrix = self.load_rating_file_as_matrix(user_path + "SortedMovies.txt")
+        self.num_users, self.num_items = self.user_Matrix.shape
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
         self.group_trainMatrix = self.load_rating_file_as_matrix(group_path + "Train.txt")

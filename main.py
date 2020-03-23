@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
     num_group = len(g_m_d)
     num_users, num_items = dataset.num_users, dataset.num_items
-    genres = dataset.gdata
+    #genres = dataset.gdata
 
     # build model
     agree = AGREE(num_users, num_items, num_group, config.embedding_size, g_m_d, config.drop_ratio, genres)

@@ -7,9 +7,9 @@ from torch.autograd import Variable
 class AGREE(nn.Module):
     def __init__(self, num_users, num_items, num_groups, embedding_dim, group_member_dict, drop_ratio, genres):
         super(AGREE, self).__init__()
-        self.genres = genres
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
-        self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
+        self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim)
+        self.genres = genres
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
         self.attention = ConcatAttentionLayer( embedding_dim * 4) # 3 Members in a group and an item / movie.
@@ -187,14 +187,14 @@ class UserEmbeddingLayer(nn.Module):
 
 
 class ItemEmbeddingLayer(nn.Module):
-    def __init__(self, num_items, embedding_dim, genres):
+    def __init__(self, num_items, embedding_dim):
         super(ItemEmbeddingLayer, self).__init__()
-        self.genres = genres
+        #self.genres = genres
         self.itemEmbedding = nn.Embedding(num_items, embedding_dim)
-        self.encoder = nn.Sequential(
-            nn.Linear(18, 4),
-            nn.ReLU()
-        )
+        # self.encoder = nn.Sequential(
+        #     nn.Linear(18, 4),
+        #     nn.ReLU()
+        # )
 
     def forward(self, item_inputs):
         # itemGenres = torch.zeros([item_inputs.size()[0], 18])
