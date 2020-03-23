@@ -11,8 +11,8 @@ from config import Config
 from utils.util import Helper
 from dataset import GDataset
 
-loss_list = list()
-epoch_list = list()
+train_loss_list = list()
+test_loss_list = list()
 
 # train the model
 def training(model, train_loader, epoch_id, config, type_m):
@@ -57,9 +57,8 @@ def training(model, train_loader, epoch_id, config, type_m):
     print("Loss : "),
     print(total_loss.item()/counter)
     
-    if(type_m=='group'):
-        loss_list.append(total_loss.item()/counter)
-        epoch_list.append(epoch_id)
+    #if(type_m=='group'):
+    train_loss_list.append(total_loss.item()/counter)
     
 
 # test the model
@@ -87,6 +86,7 @@ def testing(model, train_loader, epoch_id, config, type_m):
     print(epoch_id)
     print("Loss : "),
     print(total_loss.item()/counter)
+    test_loss_list.append(total_loss.item()/counter)
     
 
 
@@ -125,5 +125,8 @@ if __name__ == '__main__':
         testing(agree, dataset.get_user_test_dataloader(config.batch_size), epoch, config, 'user')
         #testing(agree, dataset.get_group_test_dataloader(config.batch_size), epoch, config, 'group')
         print("User testing time %.1f s\n" % (time()-t1))
+        
+    print(train_loss_list)
+    print(test_loss_list)
     
     print("Done.")
