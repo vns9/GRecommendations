@@ -1,5 +1,6 @@
 class HyperParam(object):
     def __init__(self):
+        self.num_negatives = 6
         self.path = './datasets/'
         self.user_dataset = self.path + 'userRating'
         self.group_dataset = self.path + 'groupRating'
