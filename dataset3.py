@@ -3,7 +3,7 @@ import numpy as np
 import scipy.sparse as sp
 from torch.utils.data import TensorDataset, DataLoader
 
-class GDataset(object):
+class GDataset3(object):
 
     def __init__(self, user_path, group_path, num_negatives):
         '''
