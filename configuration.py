@@ -10,5 +10,5 @@ class HyperParam(object):
         self.test_epoch = 10
         self.batch_size = 10036
         self.test_batch_size = 10036
-        self.lr = [0.005, 0.005, 0.005]
+        self.lr = [0.000005, 0.000001, 0.000005]
         self.drop_ratio = 0.2
