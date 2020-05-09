@@ -149,7 +149,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-
+'''
     #---------------------------------------------------------------------------------------------------------------------------------
 
     dataset = GDataset2(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
@@ -358,4 +358,5 @@ if __name__ == '__main__':
     train_loss_list = []
     test_loss_list = []
 
+'''
     print("Completed")

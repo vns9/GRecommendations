@@ -125,16 +125,16 @@ class ConcatAttentionLayer(nn.Module):
         super(ConcatAttentionLayer, self).__init__()
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 16),
+            nn.Linear(16, 8),
             nn.ReLU(),
-            nn.Dropout(drop_ratio),
-            nn.Linear(16, 3)
+            nn.Linear(8, 3),
         )
 
     def forward(self, x):
 
         out = self.linear(x)
-        weight = F.softmax(out.view(1, -1), dim=1)
-        return weight
+        #weight = F.softmax(out.view(1, -1), dim=1)
+        return out
 
 class PredictLayer(nn.Module):
 

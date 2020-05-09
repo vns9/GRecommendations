@@ -13,7 +13,7 @@ class BILINEAR(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
+        self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 8)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
@@ -56,6 +56,7 @@ class BILINEAR(nn.Module):
             for member in members_embeds:
                 xmember = member.view(1,member.shape[0])
                 at_wt.append(self.attention(xmember, item_embeds))
+            at_wt = F.softmax(at_wt.view(1, -1), dim=1)
             final_user = torch.zeros([32])
             i=0
             for member in members_embeds:
@@ -147,7 +148,10 @@ class BilinearAttentionLayer(nn.Module):
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
 
         super(BilinearAttentionLayer, self).__init__()
-        self.bilinear = nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
+        self.bilinear = nn.Sequential(
+            nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3),
+            nn.ReLU()
+        )
 
 
     def forward(self, x, y):
