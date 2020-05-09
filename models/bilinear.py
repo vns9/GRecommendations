@@ -56,7 +56,7 @@ class BILINEAR(nn.Module):
             for member in members_embeds:
                 xmember = member.view(1,member.shape[0])
                 at_wt.append(self.attention(xmember, item_embeds))
-            at_wt = tolist(F.softmax(torch.FloatTensor(at_wt).view(1, -1), dim=1))
+            at_wt = torch.Tensor.tolist(F.softmax(torch.FloatTensor(at_wt).view(1, -1), dim=1))
             final_user = torch.zeros([32])
             i=0
             for member in members_embeds:
