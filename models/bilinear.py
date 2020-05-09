@@ -57,9 +57,7 @@ class BILINEAR(nn.Module):
             for member in members_embeds:
                 xmember = member.view(1,member.shape[0])
                 at_wt.append(self.attention(xmember, item_embeds))
-            npat = np.array(at_wt)
-            npat1 = np.exp(npat) / np.sum(np.exp(npat), axis=0)
-            at_wt = list(npat1)
+            at_wt = [float(i)/sum(at_wt) for i in at_wt]
             final_user = torch.zeros([32])
             i=0
             for member in members_embeds:
