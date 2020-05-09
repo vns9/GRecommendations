@@ -148,15 +148,13 @@ class BilinearAttentionLayer(nn.Module):
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
 
         super(BilinearAttentionLayer, self).__init__()
-        self.bilinear = nn.Sequential(
-            nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3),
-            nn.ReLU()
-        )
+        self.bilinear =  nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
+        self.act = nn.ReLU()
 
 
     def forward(self, x, y):
 
-        out = self.bilinear(x,y)
+        out = self.act(self.bilinear(x,y))
         weight = F.softmax(out.view(1, -1), dim=1)
         return weight
 
