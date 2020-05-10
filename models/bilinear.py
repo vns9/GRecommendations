@@ -124,25 +124,6 @@ class GroupEmbeddingLayer(nn.Module):
         group_embeds = self.groupEmbedding(num_group)
         return group_embeds
 
-
-class ConcatAttentionLayer(nn.Module):
-
-    def __init__(self, embedding_dim, drop_ratio=0):
-
-        super(ConcatAttentionLayer, self).__init__()
-        self.linear = nn.Sequential(
-            nn.Linear(embedding_dim, 16),
-            nn.ReLU(),
-            nn.Dropout(drop_ratio),
-            nn.Linear(16, 1)
-        )
-
-    def forward(self, x):
-
-        out = self.linear(x)
-        weight = F.softmax(out.view(1, -1), dim=1)
-        return weight
-
 class BilinearAttentionLayer(nn.Module):
 
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):

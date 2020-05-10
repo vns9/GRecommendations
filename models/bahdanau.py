@@ -126,7 +126,6 @@ class ConcatAttentionLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 16),
             nn.Linear(16, 8),
-            nn.ReLU(),
             nn.Linear(8, 3),
         )
 

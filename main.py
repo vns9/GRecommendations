@@ -30,9 +30,9 @@ def training(model, train_loader, epoch_id, config, type_m):
     # learning rate decay
     lr = learning_rates[0]
     if epoch_id >= 15 and epoch_id < 25:
-        lr = learning_rates[0]
+        lr = learning_rates[1]
     elif epoch_id >=20:
-        lr = learning_rates[0]
+        lr = learning_rates[2]
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
