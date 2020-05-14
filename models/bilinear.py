@@ -59,10 +59,10 @@ class BILINEAR(nn.Module):
                 xmember = member.view(1,member.shape[0])
                 at_wt.append(self.attention(xmember, item_embeds))
             final_user = torch.zeros([32])
-            i=0
+            val=0
             for member in members_embeds:
-                final_user = torch.add(at_wt[i]*member, final_user)
-                i+=1
+                final_user = torch.add(at_wt[val]*member, final_user)
+                val+=1
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
             else:
