@@ -58,12 +58,11 @@ class BILINEAR(nn.Module):
             for member in members_embeds:
                 xmember = member.view(1,member.shape[0])
                 at_wt.append(self.attention(xmember, item_embeds))
-            at_wt = [e**i for i in at_wt]
-            at_wt = [float(i)/sum(at_wt) for i in at_wt]
             final_user = torch.zeros([32])
             i=0
             for member in members_embeds:
                 final_user = torch.add(at_wt[i]*member, final_user)
+                i+=1
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
             else:
@@ -139,8 +138,8 @@ class BilinearAttentionLayer(nn.Module):
     def forward(self, x, y):
 
         out = self.act(self.bilinear(x,y))
-        weight = F.softmax(out.view(1, -1), dim=1)
-        return weight
+        #weight = F.softmax(out.view(1, -1), dim=1)
+        return out
 
 
 class PredictLayer(nn.Module):
