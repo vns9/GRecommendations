@@ -132,7 +132,7 @@ class ConcatAttentionLayer(nn.Module):
     def forward(self, x):
 
         out = self.linear(x)
-        weight = F.softmax(out.view(1, -1), dim=1)
+        #weight = F.softmax(out.view(1, -1), dim=1)
         return out
 
 class PredictLayer(nn.Module):
