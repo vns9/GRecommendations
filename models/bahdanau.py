@@ -124,9 +124,10 @@ class ConcatAttentionLayer(nn.Module):
 
         super(ConcatAttentionLayer, self).__init__()
         self.linear = nn.Sequential(
-            nn.Linear(embedding_dim, 3)
-            # nn.Linear(16, 8),
-            # nn.Linear(8, 3),
+            nn.Linear(embedding_dim, 16)
+            nn.Linear(16, 8),
+            nn.Linear(8, 4),
+            nn.Linear(4, 3)
         )
 
     def forward(self, x):
