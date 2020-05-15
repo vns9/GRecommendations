@@ -19,6 +19,7 @@ from dataset5 import GDataset5
 
 from models.bahdanau import BAHDANAU
 from models.bilinear import BILINEAR
+from models.bahdanauplus import BAHDANAUplus
 
 train_loss_list = []
 test_loss_list = []
@@ -106,8 +107,25 @@ if __name__ == '__main__':
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
 
+    # BAHDANAU PLUS------------------------------------------------------------------------------------------------------------------
+    '''
+    bahdanau = BAHDANAUplus(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+    t = time()
 
-
+    for epoch in range(configuration.epoch):
+        bahdanau.train()
+        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        
+    for epoch in range(configuration.test_epoch):
+        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        
+    print("Bahdanau+: %.1f s\n" % (time()-t))
+        
+    print(train_loss_list)
+    print(test_loss_list)
+    '''
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
 
     bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -115,11 +133,11 @@ if __name__ == '__main__':
     
     for epoch in range(configuration.epoch):
         bilinear.train()
-        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
         training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
-        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
         testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
     print("Bilinear: %.1f s\n" % (time()-t))
@@ -137,11 +155,11 @@ if __name__ == '__main__':
 
     for epoch in range(configuration.epoch):
         bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
         training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
         testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     print("Bahdanau: %.1f s\n" % (time()-t))
@@ -151,6 +169,8 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
+
+    
 '''
     #---------------------------------------------------------------------------------------------------------------------------------
 

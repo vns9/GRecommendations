@@ -21,15 +21,15 @@ class BILINEAR(nn.Module):
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
 
-        # for m in self.modules():
-        #     if isinstance(m, nn.Linear):
-        #         #nn.init.normal_(m.weight)
-        #         m.weight.data.fill_(0.01)
-        #     if isinstance(m, nn.Bilinear):
-        #         nn.init.normal_(m.weight)
-        #     if isinstance(m, nn.Embedding):
-        #         #nn.init.xavier_normal_(m.weight)
-        #         m.weight.data.fill_(0.01)
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                #nn.init.normal_(m.weight)
+                m.weight.data.fill_(0.01)
+            if isinstance(m, nn.Bilinear):
+                nn.init.normal_(m.weight)
+            if isinstance(m, nn.Embedding):
+                #nn.init.xavier_normal_(m.weight)
+                m.weight.data.fill_(0.01)
 
     def forward(self, group_inputs, user_inputs, item_inputs):
 
@@ -132,13 +132,13 @@ class BilinearAttentionLayer(nn.Module):
 
         super(BilinearAttentionLayer, self).__init__()
         self.bilinear =  nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
-        self.act = nn.ReLU()
+        
 
 
     def forward(self, x, y):
 
-        out = self.act(self.bilinear(x,y))
-        #weight = F.softmax(out.view(1, -1), dim=1)
+        out = self.bilinear(x,y)
+        weight = F.softmax(out.view(1, -1), dim=1)
         return out
 
 
@@ -150,7 +150,7 @@ class PredictLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 8),
             nn.ReLU(),
-            nn.Dropout(drop_ratio),
+            #nn.Dropout(drop_ratio),
             nn.Linear(8, 1)
         )
 

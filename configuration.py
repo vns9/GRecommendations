@@ -13,4 +13,4 @@ class HyperParam(object):
         #self.lr = [0.005, 0.005, 0.005]
         #self.lr = [0.0001, 0.000005, 0.000005]
         self.lr = [0.0001, 0.0001, 0.0001]
-        self.drop_ratio = 0.2
+        self.drop_ratio = 0.4

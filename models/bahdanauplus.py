@@ -4,11 +4,11 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-class BAHDANAU(nn.Module):
+class BAHDANAUplus(nn.Module):
 
     def __init__(self, num_users, num_items, num_groups, embedding_dim, group_member_dict, drop_ratio, genres):
 
-        super(BAHDANAU, self).__init__()
+        super(BAHDANAUplus, self).__init__()
         self.genres = genres
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
@@ -52,7 +52,7 @@ class BAHDANAU(nn.Module):
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
             group_item_embeds = torch.cat((members_embeds, item_embeds), dim=0)
             group_item_embeds_a = torch.reshape(group_item_embeds, (1,4*32))
-            at_wt = self.attention(group_item_embeds_a)
+            at_wt = self.attention(group_item_embeds_a) 
             g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
@@ -97,12 +97,21 @@ class ItemEmbeddingLayer(nn.Module):
 
         super(ItemEmbeddingLayer, self).__init__()
         self.genres = genres
-        self.itemEmbedding = nn.Embedding(num_items, embedding_dim)
+        self.itemEmbedding = nn.Embedding(num_items, embedding_dim-18)
 
     def forward(self, item_inputs):
 
+        itemGenres = torch.zeros([item_inputs.size()[0], 18])
+        for i in range(item_inputs.size()[0]):
+            for j in range(18):
+                if str(item_inputs[i].item()) in self.genres:
+                    itemGenres[i][j] = int(self.genres[str(item_inputs[i].item())][j])
+                else:
+                    itemGenres[i][j] = 0
+
         item_embeds = self.itemEmbedding(item_inputs)
-        return item_embeds
+        item_embedds = torch.cat([item_embeds, itemGenres], dim=1)
+        return item_embedds
 
 
 class GroupEmbeddingLayer(nn.Module):
@@ -124,14 +133,16 @@ class ConcatAttentionLayer(nn.Module):
 
         super(ConcatAttentionLayer, self).__init__()
         self.linear = nn.Sequential(
-            nn.Linear(embedding_dim, 3),
-            nn.Dropout(drop_ratio)
+            nn.Linear(embedding_dim, 16),
+            nn.Linear(16, 8),
+            nn.Linear(8, 4),
+            nn.Linear(4, 3)
         )
 
     def forward(self, x):
 
         out = self.linear(x)
-        weight = F.softmax(out.view(1, -1), dim=1)
+        #weight = F.softmax(out.view(1, -1), dim=1)
         return out
 
 class PredictLayer(nn.Module):
@@ -142,6 +153,7 @@ class PredictLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 8),
             nn.ReLU(),
+            nn.Dropout(drop_ratio),
             nn.Linear(8, 1)
         )
 
