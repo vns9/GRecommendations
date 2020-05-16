@@ -62,8 +62,8 @@ def training(model, train_loader, epoch_id, config, type_m):
         loss.backward()
         optimizer.step()
     
-    if(type_m=='group'):
-        train_loss_list.append(total_loss.item()/counter)
+    #if(type_m=='group'):
+    train_loss_list.append(total_loss.item()/counter)
     
 
 # test the model
@@ -86,8 +86,8 @@ def testing(model, train_loader, epoch_id, config, type_m):
         loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
         total_loss+=loss
         counter+=1
-    if(type_m=='group'):
-        test_loss_list.append(total_loss.item()/counter)
+    #if(type_m=='group'):
+    test_loss_list.append(total_loss.item()/counter)
 
 
 
@@ -114,12 +114,12 @@ if __name__ == '__main__':
 
     for epoch in range(configuration.epoch):
         bahdanau.train()
-        #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
-        #testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     print("Bahdanau+: %.1f s\n" % (time()-t))
         
@@ -158,12 +158,12 @@ if __name__ == '__main__':
 
     for epoch in range(configuration.epoch):
         bahdanau.train()
-        #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
-        #testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     print("Bahdanau: %.1f s\n" % (time()-t))
         
