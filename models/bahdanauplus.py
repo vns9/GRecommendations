@@ -19,14 +19,14 @@ class BAHDANAUplus(nn.Module):
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
 
-        # initial model
-        # for m in self.modules():
-        #     if isinstance(m, nn.Linear):
-        #         #nn.init.normal_(m.weight)
-        #         m.weight.data.fill_(0.01)
-        #     if isinstance(m, nn.Embedding):
-        #         #nn.init.xavier_normal_(m.weight)
-        #         m.weight.data.fill_(0.01)
+        initial model
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                #nn.init.normal_(m.weight)
+                m.weight.data.fill_(0.01)
+            if isinstance(m, nn.Embedding):
+                #nn.init.xavier_normal_(m.weight)
+                m.weight.data.fill_(0.01)
 
     def forward(self, group_inputs, user_inputs, item_inputs):
 
@@ -52,7 +52,7 @@ class BAHDANAUplus(nn.Module):
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
             group_item_embeds = torch.cat((members_embeds, item_embeds), dim=0)
             group_item_embeds_a = torch.reshape(group_item_embeds, (1,4*32))
-            at_wt = self.attention(group_item_embeds_a) 
+            at_wt = self.attention(group_item_embeds_a)
             g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
@@ -133,16 +133,14 @@ class ConcatAttentionLayer(nn.Module):
 
         super(ConcatAttentionLayer, self).__init__()
         self.linear = nn.Sequential(
-            nn.Linear(embedding_dim, 16),
-            nn.Linear(16, 8),
-            nn.Linear(8, 4),
-            nn.Linear(4, 3)
+            nn.Linear(embedding_dim, 3),
+            nn.Dropout(drop_ratio)
         )
 
     def forward(self, x):
 
         out = self.linear(x)
-        #weight = F.softmax(out.view(1, -1), dim=1)
+        weight = F.softmax(out.view(1, -1), dim=1)
         return out
 
 class PredictLayer(nn.Module):
@@ -153,7 +151,6 @@ class PredictLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 8),
             nn.ReLU(),
-            nn.Dropout(drop_ratio),
             nn.Linear(8, 1)
         )
 
