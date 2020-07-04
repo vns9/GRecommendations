@@ -5,11 +5,10 @@ from torch.utils.data import TensorDataset, DataLoader
 
 class GDataset2(object):
 
-    def __init__(self, user_path, group_path, num_negatives):
+    def __init__(self, user_path, group_path, ):
         '''
         Constructor
         '''
-        self.num_negatives = num_negatives
         # user data
         self.user_trainMatrix = self.load_rating_file_as_matrix(user_path + "ctrain.txt")
         self.user_testMatrix = self.load_rating_file_as_matrix(user_path + "ctest.txt")

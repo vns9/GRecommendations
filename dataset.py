@@ -5,11 +5,8 @@ from torch.utils.data import TensorDataset, DataLoader
 
 class GDataset(object):
 
-    def __init__(self, user_path, group_path, num_negatives):
-        '''
-        Constructor
-        '''
-        self.num_negatives = num_negatives
+    def __init__(self, user_path, group_path):
+
         # user data
         self.user_trainMatrix = self.load_rating_file_as_matrix(user_path + "ctrain.txt")
         self.user_testMatrix = self.load_rating_file_as_matrix(user_path + "ctest.txt")
@@ -30,31 +27,6 @@ class GDataset(object):
             a = liner.split(" ")
             dict[str(a[0])] = a[1]
         return dict
-
-
-    def load_rating_file_as_list(self, filename):
-        ratingList = []
-        with open(filename, "r") as f:
-            line = f.readline()
-            while line != None and line != "":
-                arr = line.split()
-                user, item = int(arr[0]), int(arr[1])
-                ratingList.append([user, item])
-                line = f.readline()
-        return ratingList
-
-    def load_negative_file(self, filename):
-        negativeList = []
-        with open(filename, "r") as f:
-            line = f.readline()
-            while line != None and line != "":
-                arr = line.split()
-                negatives = []
-                for x in arr[1:]: 
-                    negatives.append(int(x))
-                negativeList.append(negatives)
-                line = f.readline()
-        return negativeList
 
     def load_rating_file_as_matrix(self, filename):
         # Get number of users and items
@@ -84,10 +56,7 @@ class GDataset(object):
         return mat
 
     def get_train_instances(self, train):
-        user_input, pos_item_input, neg_item_input = [], [], []
-        actual_ratings = []
-        num_users = train.shape[0]
-        num_items = train.shape[1]
+        user_input, pos_item_input, actual_ratings = [], [], []
         for (u, i) in train.keys():
             pos_item_input.append(i)
             user_input.append(u)

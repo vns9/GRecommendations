@@ -12,10 +12,10 @@ from configuration import HyperParam
 from util import Helper
 
 from dataset import GDataset
-from dataset2 import GDataset2
-from dataset3 import GDataset3
-from dataset4 import GDataset4
-from dataset5 import GDataset5
+# from dataset2 import GDataset2
+# from dataset3 import GDataset3
+# from dataset4 import GDataset4
+# from dataset5 import GDataset5
 
 from models.bahdanau import BAHDANAU
 from models.bilinear import BILINEAR
@@ -54,7 +54,6 @@ def training(model, train_loader, epoch_id, config, type_m):
         # Loss
         d_r = r.double()
         d_r = d_r/5
-        #print(pos_prediction)
         loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
         total_loss+=loss
         counter+=1
@@ -101,25 +100,24 @@ if __name__ == '__main__':
 
     #---------------------------------------------------------------------------------------------------------------------------------
 
-    dataset = GDataset(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
+    dataset = GDataset(configuration.user_dataset, configuration.group_dataset)
 
     num_group = len(g_m_d)
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
 
     # BAHDANAU PLUS------------------------------------------------------------------------------------------------------------------
-    
     bahdanau = BAHDANAUplus(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t = time()
 
     for epoch in range(configuration.epoch):
         bahdanau.train()
         training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        #training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
         testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        #testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     print("Bahdanau+: %.1f s\n" % (time()-t))
         
@@ -130,17 +128,16 @@ if __name__ == '__main__':
     test_loss_list = []
     
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-    '''
     bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t=time()
     
     for epoch in range(configuration.epoch):
         bilinear.train()
-        #training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
         training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     for epoch in range(configuration.test_epoch):
-        #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
         testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
     print("Bilinear: %.1f s\n" % (time()-t))
@@ -150,41 +147,8 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    '''
-    # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t = time()
-
-    for epoch in range(configuration.epoch):
-        bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        #training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        #testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    print("Bahdanau: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
     
-'''
-    #---------------------------------------------------------------------------------------------------------------------------------
-
-    dataset = GDataset2(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
-
-    num_group = len(g_m_d)
-    num_users, num_items = dataset.num_users, dataset.num_items
-    genres = dataset.gdata
-
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-
     bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t = time()
 
@@ -205,183 +169,5 @@ if __name__ == '__main__':
     train_loss_list = []
     test_loss_list = []
 
-    # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t=time()
-    
-    for epoch in range(configuration.epoch):
-        bilinear.train()
-        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
-    print("Bilinear: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    #---------------------------------------------------------------------------------------------------------------------------------
-
-    dataset = GDataset3(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
-
-    num_group = len(g_m_d)
-    num_users, num_items = dataset.num_users, dataset.num_items
-    genres = dataset.gdata
-
-    # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t = time()
-
-    for epoch in range(configuration.epoch):
-        bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    print("Bahdanau: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t=time()
-    
-    for epoch in range(configuration.epoch):
-        bilinear.train()
-        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
-    print("Bilinear: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    #---------------------------------------------------------------------------------------------------------------------------------
-
-    dataset = GDataset4(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
-
-    num_group = len(g_m_d)
-    num_users, num_items = dataset.num_users, dataset.num_items
-    genres = dataset.gdata
-
-    # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t = time()
-
-    for epoch in range(configuration.epoch):
-        bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    print("Bahdanau: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t=time()
-    
-    for epoch in range(configuration.epoch):
-        bilinear.train()
-        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
-    print("Bilinear: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    #---------------------------------------------------------------------------------------------------------------------------------
-
-    dataset = GDataset5(configuration.user_dataset, configuration.group_dataset, configuration.num_negatives)
-
-    num_group = len(g_m_d)
-    num_users, num_items = dataset.num_users, dataset.num_items
-    genres = dataset.gdata
-
-    # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t = time()
-
-    for epoch in range(configuration.epoch):
-        bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    print("Bahdanau: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-    # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-
-    bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t=time()
-    
-    for epoch in range(configuration.epoch):
-        bilinear.train()
-        training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
-    print("Bilinear: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-
-'''
+ 
 print("Completed")

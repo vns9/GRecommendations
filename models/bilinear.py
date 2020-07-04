@@ -150,7 +150,6 @@ class PredictLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 8),
             nn.ReLU(),
-            #nn.Dropout(drop_ratio),
             nn.Linear(8, 1)
         )
 
