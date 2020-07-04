@@ -23,13 +23,12 @@ class BILINEAR(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                #nn.init.normal_(m.weight)
-                m.weight.data.fill_(0.01)
+                nn.init.normal_(m.weight)
             if isinstance(m, nn.Bilinear):
                 nn.init.normal_(m.weight)
             if isinstance(m, nn.Embedding):
-                #nn.init.xavier_normal_(m.weight)
-                m.weight.data.fill_(0.01)
+                nn.init.xavier_normal_(m.weight)
+                
 
     def forward(self, group_inputs, user_inputs, item_inputs):
 
