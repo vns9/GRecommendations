@@ -19,7 +19,7 @@ class BAHDANAU(nn.Module):
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
 
-		for m in self.modules():
+        for m in self.modules():
             if isinstance(m, nn.Linear):
                 nn.init.normal_(m.weight)
                 #m.weight.data.fill_(0.01)
