@@ -178,7 +178,7 @@ if __name__ == '__main__':
     
     for epoch in range(configuration.epoch):
         bahdanau2.train()
-        #training(bahdanau2, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        training(bahdanau2, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
         training(bahdanau2, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
     # for epoch in range(configuration.test_epoch):
