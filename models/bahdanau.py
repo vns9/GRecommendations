@@ -123,7 +123,6 @@ class ConcatAttentionLayer(nn.Module):
         super(ConcatAttentionLayer, self).__init__()
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 3),
-            nn.Dropout(drop_ratio)
         )
 
     def forward(self, x):
