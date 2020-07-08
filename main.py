@@ -17,10 +17,10 @@ from dataset import GDataset
 # from dataset4 import GDataset4
 # from dataset5 import GDataset5
 
-from models.bahdanau import BAHDANAU
+#from models.bahdanau import BAHDANAU
 from models.bilinear import BILINEAR
 from models.bahdanau2 import bahdanau2
-from models.bahdanauplus import BAHDANAUplus
+#from models.bahdanauplus import BAHDANAUplus
 
 train_loss_list = []
 test_loss_list = []
@@ -35,9 +35,12 @@ def training(model, train_loader, epoch_id, config, type_m):
         lr = learning_rates[1]
     elif epoch_id >=20:
         lr = learning_rates[2]
+        
+    if epoch_id % 5 == 0:
+        lr /= 2
 
     # optimizer
-    # optimizer = optim.RMSprop(model.parameters(), lr)
+    optimizer = optim.RMSprop(model.parameters(), lr)
 
     total_loss=0
     counter=0
@@ -60,7 +63,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         counter+=1
         # Backward
         loss.backward()
-        # optimizer.step()
+        optimizer.step()
     
     if(type_m=='group'):
         train_loss_list.append(total_loss.item()/counter)
@@ -139,9 +142,9 @@ if __name__ == '__main__':
         #training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
         training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
         
-    for epoch in range(configuration.test_epoch):
+    #for epoch in range(configuration.test_epoch):
         #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+        #testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
     print("Bilinear: %.1f s\n" % (time()-t))
         
@@ -172,7 +175,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-	
+    
 '''
     bahdanau2 = bahdanau2(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t=time()
