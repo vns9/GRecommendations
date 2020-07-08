@@ -36,8 +36,8 @@ def training(model, train_loader, epoch_id, config, type_m):
     elif epoch_id >=20:
         lr = learning_rates[2]
         
-    if epoch_id % 5 == 0:
-        lr /= 2
+    # if epoch_id % 5 == 0:
+    #     lr /= 2
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
