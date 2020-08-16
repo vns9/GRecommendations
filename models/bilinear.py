@@ -46,22 +46,30 @@ class BILINEAR(nn.Module):
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
-        at_wt = []
+        # at_wt = []
         item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
         for i, j in zip(group_inputs, item_inputs):
             members = self.group_member_dict[int(i)]
             members_embeds = self.userembeds(Variable(torch.LongTensor(members)))
+            items_numb1 = []
+            for _ in members:
+                items_numb1.append(j)
+            item_embeds1 = self.itemembeds(Variable(torch.LongTensor(items_numb1)))
             items_numb = []
             items_numb.append(j)
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
-            for member in members_embeds:
-                xmember = member.view(1,member.shape[0])
-                at_wt.append(self.attention(xmember, item_embeds))
-            final_user = torch.zeros([32])
-            val=0
-            for member in members_embeds:
-                final_user = torch.add(at_wt[val]*member, final_user)
-                val+=1
+            at_wt = self.attention(members_embeds, item_embeds1)
+            final_user = (torch.matmul(at_wt.reshape(-1), members_embeds)).reshape((1,32))
+            # print(final_user.shape)
+            # print(item_embeds.shape)
+            # for member in members_embeds:
+            #     xmember = member.view(1,member.shape[0])
+            #     at_wt.append(self.attention(xmember, item_embeds))
+            # final_user = Variable(torch.zeros([32]))
+            # val=0
+            # for member in members_embeds:
+            #     final_user = torch.add(at_wt[val]*member, final_user)
+            #     val+=1
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
             else:
@@ -149,7 +157,7 @@ class PredictLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 8),
             nn.ReLU(),
-			nn.Dropout(drop_ratio),
+            nn.Dropout(drop_ratio),
             nn.Linear(8, 1)
         )
 
