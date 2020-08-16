@@ -60,16 +60,6 @@ class BILINEAR(nn.Module):
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
             at_wt = self.attention(members_embeds, item_embeds1)
             final_user = (torch.matmul(at_wt.reshape(-1), members_embeds)).reshape((1,32))
-            # print(final_user.shape)
-            # print(item_embeds.shape)
-            # for member in members_embeds:
-            #     xmember = member.view(1,member.shape[0])
-            #     at_wt.append(self.attention(xmember, item_embeds))
-            # final_user = Variable(torch.zeros([32]))
-            # val=0
-            # for member in members_embeds:
-            #     final_user = torch.add(at_wt[val]*member, final_user)
-            #     val+=1
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
             else:

@@ -7,7 +7,7 @@ class HyperParam(object):
         self.embedding_size = 32
         self.epoch = 30
         self.test_epoch = 5
-        self.batch_size = 10036
-        self.test_batch_size = 10036
-        self.lr = [0.01, 0.01, 0.01]
-        self.drop_ratio = 0.4
+        self.batch_size = 256
+        self.test_batch_size = 256
+        self.lr = [0.00001, 0.00001, 0.00001]
+        self.drop_ratio = 0.2
