@@ -133,7 +133,7 @@ if __name__ == '__main__':
     test_loss_list = []
     '''
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-    
+    '''
     bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t=time()
     
@@ -153,10 +153,10 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    
+    '''
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
     
-    bahdanau = BAHDANAU(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+    bahdanau = bahdanau2(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t = time()
 
     for epoch in range(configuration.epoch):

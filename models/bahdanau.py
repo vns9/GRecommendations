@@ -54,7 +54,7 @@ class BAHDANAU(nn.Module):
             g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
-            else:
+            else: 
                 all_item_embeds = torch.cat((all_item_embeds, item_embeds))
             if group_embeds.dim() == 0:
                 group_embeds = g_embeds_with_attention

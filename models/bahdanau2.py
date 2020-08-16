@@ -46,7 +46,6 @@ class bahdanau2(nn.Module):
         group_embeds = Variable(torch.Tensor())
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
-        at_wt = []
         item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
         for i, j in zip(group_inputs, item_inputs):
             members = self.group_member_dict[int(i)]
@@ -126,7 +125,6 @@ class BilinearAttentionLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, 16),
             nn.ReLU(),
-            nn.Dropout(drop_ratio),
             nn.Linear(16, 1),
         )
 
