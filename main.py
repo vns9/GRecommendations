@@ -176,6 +176,5 @@ if __name__ == '__main__':
     train_loss_list = []
     test_loss_list = []
     
-    '''
     
 print("Completed")
