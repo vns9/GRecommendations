@@ -61,7 +61,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         # Loss
         d_r = r.double()
         d_r = d_r/5
-        loss = torch.sqrt(torch.mean((pos_prediction-d_r) ** 2))
+        loss = torch.mean(torch.sqrt((100*(pos_prediction-d_r)) ** 2))
         total_loss += loss
         counter += 1
         # Backward
