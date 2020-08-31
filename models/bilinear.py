@@ -17,7 +17,7 @@ class BILINEAR(nn.Module):
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.attention = BilinearAttentionLayer(
-            embedding_dim, embedding_dim, embedding_dim/2)
+            embedding_dim, embedding_dim, 1)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
@@ -142,15 +142,16 @@ class BilinearAttentionLayer(nn.Module):
         self.bilinear = nn.Bilinear(
             embedding_dim_1, embedding_dim_2, embedding_dim_3, bias=False)
 
-        self.linear = nn.Sequential(
-            nn.Linear(embedding_dim_3, embedding_dim_3/2),
-            nn.ReLU(),
-            nn.Linear(embedding_dim_3/2, 1),
-        )
+        # self.linear = nn.Sequential(
+        #     nn.Linear(embedding_dim_3, embedding_dim_3/2),
+        #     nn.ReLU(),
+        #     nn.Linear(embedding_dim_3/2, 1),
+        # )
 
     def forward(self, x, y):
 
-        out = self.linear(self.bilinear(x, y))
+        #out = self.linear(self.bilinear(x, y))
+        out = self.bilinear(x,y)
         weight = F.softmax(out.view(1, -1), dim=1)
         return out
 
