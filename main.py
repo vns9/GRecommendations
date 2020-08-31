@@ -111,7 +111,7 @@ if __name__ == '__main__':
     num_group = len(g_m_d)
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
-    '''
+    
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    '''
+    
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     noattention = noattention(num_users, num_items, num_group,
