@@ -11,13 +11,14 @@ class noattention(nn.Module):
     def __init__(self, num_users, num_items, num_groups, embedding_dim, group_member_dict, drop_ratio, genres):
 
         super(noattention, self).__init__()
+        self.embedding_dim = embedding_dim
         self.genres = genres
+        self.member = MemberLayer(3 * embedding_dim, drop_ratio)
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.attention = BilinearAttentionLayer(2 * embedding_dim, drop_ratio)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
-        self.member = MemberLayer((3 * embedding_dim, drop_ratio)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
         self.num_groups = len(self.group_member_dict)
@@ -56,15 +57,18 @@ class noattention(nn.Module):
             items_numb = []
             items_numb.append(j)
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
-            #group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
-            #at_wt = self.attention(group_item_embeds)
-            g_embeds_with_attention = torch.matmul(at_wt, members_embeds)
-            #group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
-            g_embeds = g_embeds_with_attention #+ group_embeds_pure
+            # #group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
+            # #at_wt = self.attention(group_item_embeds)
+            # g_embeds_with_attention = members_embeds
+            # #group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
+            # g_embeds = g_embeds_with_attention #+ group_embeds_pure
+            members_embeds = members_embeds.reshape((1,self.embedding_dim))
             if group_embeds.dim() == 0:
-                group_embeds = g_embeds
+                group_embeds = members_embeds
             else:
-                group_embeds = torch.cat((group_embeds, g_embeds))
+                group_embeds = torch.cat((group_embeds, members_embeds))
+        # print(group_embeds.shape)
+        # print(item_embeds_full.shape)
         element_embeds = torch.mul(group_embeds, item_embeds_full)  # Element-wise product
         new_embeds = torch.cat((element_embeds, group_embeds, item_embeds_full), dim=1)
         y = F.sigmoid(self.predictlayer(new_embeds))
@@ -125,7 +129,7 @@ class MemberLayer(nn.Module):
     def __init__(self, embedding_dim, drop_ratio=0):
         super(MemberLayer, self).__init__()
         self.linear = nn.Sequential(
-            nn.Linear(embedding_dim, embedding_dim/3),
+            nn.Linear(embedding_dim, int(embedding_dim/3)),
         )
 
     def forward(self, x):

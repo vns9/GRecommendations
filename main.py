@@ -19,7 +19,7 @@ from dataset import GDataset
 
 #from models.bahdanau import BAHDANAU
 from models.bilinear import BILINEAR
-from models.bahdanau2 import bahdanau2
+#from models.bahdanau2 import bahdanau2
 from models.noattention import noattention
 #from models.bahdanauplus import BAHDANAUplus
 
@@ -111,29 +111,6 @@ if __name__ == '__main__':
     num_group = len(g_m_d)
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
-
-    # BAHDANAU PLUS------------------------------------------------------------------------------------------------------------------
-    '''
-    bahdanau = BAHDANAUplus(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t = time()
-
-    for epoch in range(configuration.epoch):
-        bahdanau.train()
-        training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    for epoch in range(configuration.test_epoch):
-        testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    print("Bahdanau+: %.1f s\n" % (time()-t))
-        
-    print(train_loss_list)
-    print(test_loss_list)
-
-    train_loss_list = []
-    test_loss_list = []
-    '''
     '''
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
@@ -166,9 +143,9 @@ if __name__ == '__main__':
     t = time()
 
     for epoch in range(configuration.epoch):
-        bahdanau.train()
+        noattention.train()
         #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(
+        training(noattention, dataset.get_group_dataloader(
             configuration.batch_size), epoch, configuration, 'group')
 
     # for epoch in range(configuration.test_epoch):
