@@ -20,6 +20,7 @@ from dataset import GDataset
 #from models.bahdanau import BAHDANAU
 from models.bilinear import BILINEAR
 from models.bahdanau2 import bahdanau2
+from models.noattention import noattention
 #from models.bahdanauplus import BAHDANAUplus
 
 train_loss_list = []
@@ -133,6 +134,7 @@ if __name__ == '__main__':
     train_loss_list = []
     test_loss_list = []
     '''
+    '''
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
@@ -156,10 +158,10 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-
+    '''
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
-    bahdanau = bahdanau2(num_users, num_items, num_group,
+    noattention = noattention(num_users, num_items, num_group,
                          configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t = time()
 
@@ -173,7 +175,7 @@ if __name__ == '__main__':
     #     testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
     #     testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
-    print("Bahdanau: %.1f s\n" % (time()-t))
+    print("No Attention: %.1f s\n" % (time()-t))
 
     print(train_loss_list)
     print(test_loss_list)
