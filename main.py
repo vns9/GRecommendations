@@ -26,6 +26,8 @@ train_loss_list = []
 test_loss_list = []
 
 # train the model
+
+
 def training(model, train_loader, epoch_id, config, type_m):
     # user training
     learning_rates = config.lr
@@ -33,17 +35,17 @@ def training(model, train_loader, epoch_id, config, type_m):
     lr = learning_rates[0]
     if epoch_id >= 15 and epoch_id < 20:
         lr = learning_rates[1]
-    elif epoch_id >=20:
+    elif epoch_id >= 20:
         lr = learning_rates[2]
-        
+
     # if epoch_id % 5 == 0:
     #     lr /= 2
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
 
-    total_loss=0
-    counter=0
+    total_loss = 0
+    counter = 0
     for batch_id, (u, pi_ni, r) in enumerate(train_loader):
         # Data Load
         user_input = u
@@ -58,22 +60,22 @@ def training(model, train_loader, epoch_id, config, type_m):
         # Loss
         d_r = r.double()
         d_r = d_r/5
-        loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
-        total_loss+=loss
-        counter+=1
+        loss = torch.sqrt(torch.mean((pos_prediction-d_r) ** 2))
+        total_loss += loss
+        counter += 1
         # Backward
         loss.backward()
         optimizer.step()
-    
-    if(type_m=='group'):
+
+    if(type_m == 'group'):
         train_loss_list.append(total_loss.item()/counter)
-    
+
 
 # test the model
 def testing(model, train_loader, epoch_id, config, type_m):
-    
-    total_loss=0
-    counter=0
+
+    total_loss = 0
+    counter = 0
     losses = []
     for batch_id, (u, pi_ni, r) in enumerate(train_loader):
         # Data Load
@@ -85,13 +87,12 @@ def testing(model, train_loader, epoch_id, config, type_m):
         elif type_m == 'group':
             pos_prediction = model(user_input, None, pos_item_input)
         d_r = r.double()
-        d_r = d_r/5 #ratings given in stars out of 5
-        loss = torch.sqrt(torch.mean((pos_prediction-d_r) **2))
-        total_loss+=loss
-        counter+=1
-    if(type_m=='group'):
+        d_r = d_r/5  # ratings given in stars out of 5
+        loss = torch.sqrt(torch.mean((pos_prediction-d_r) ** 2))
+        total_loss += loss
+        counter += 1
+    if(type_m == 'group'):
         test_loss_list.append(total_loss.item()/counter)
-
 
 
 if __name__ == '__main__':
@@ -102,7 +103,7 @@ if __name__ == '__main__':
 
     g_m_d = helper.gen_group_member_dict(configuration.user_in_group_path)
 
-    #---------------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------------
 
     dataset = GDataset(configuration.user_dataset, configuration.group_dataset)
 
@@ -133,48 +134,52 @@ if __name__ == '__main__':
     test_loss_list = []
     '''
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-    
-    bilinear = BILINEAR(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
-    t=time()
-    
+    torch.manual_seed(0)
+    bilinear = BILINEAR(num_users, num_items, num_group,
+                        configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+    t = time()
+
     for epoch in range(configuration.epoch):
         bilinear.train()
         #training(bilinear, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bilinear, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
-    #for epoch in range(configuration.test_epoch):
+        training(bilinear, dataset.get_group_dataloader(
+            configuration.batch_size), epoch, configuration, 'group')
+
+    # for epoch in range(configuration.test_epoch):
         #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
         #testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
     print("Bilinear: %.1f s\n" % (time()-t))
-        
+
     print(train_loss_list)
     print(test_loss_list)
 
     train_loss_list = []
     test_loss_list = []
-    
+
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
-    
-    bahdanau = bahdanau2(num_users, num_items, num_group, configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+    torch.manual_seed(0)
+    bahdanau = bahdanau2(num_users, num_items, num_group,
+                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
     t = time()
 
     for epoch in range(configuration.epoch):
         bahdanau.train()
         #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(bahdanau, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
+        training(bahdanau, dataset.get_group_dataloader(
+            configuration.batch_size), epoch, configuration, 'group')
+
     # for epoch in range(configuration.test_epoch):
     #     testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
     #     testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-        
+
     print("Bahdanau: %.1f s\n" % (time()-t))
-        
+
     print(train_loss_list)
     print(test_loss_list)
 
     train_loss_list = []
     test_loss_list = []
-    
-    
+
+
 print("Completed")

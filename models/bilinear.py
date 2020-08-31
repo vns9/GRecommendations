@@ -6,6 +6,7 @@ from torch.autograd import Variable
 
 from math import e
 
+
 class BILINEAR(nn.Module):
 
     def __init__(self, num_users, num_items, num_groups, embedding_dim, group_member_dict, drop_ratio, genres):
@@ -15,7 +16,8 @@ class BILINEAR(nn.Module):
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
         self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
-        self.attention = BilinearAttentionLayer( embedding_dim, embedding_dim, 1)
+        self.attention = BilinearAttentionLayer(
+            embedding_dim, embedding_dim, embedding_dim/2)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
         self.group_member_dict = group_member_dict
         self.num_users = num_users
@@ -28,7 +30,6 @@ class BILINEAR(nn.Module):
                 nn.init.normal_(m.weight)
             if isinstance(m, nn.Embedding):
                 nn.init.xavier_normal_(m.weight)
-                
 
     def forward(self, group_inputs, user_inputs, item_inputs):
 
@@ -47,19 +48,24 @@ class BILINEAR(nn.Module):
         gm_embeddings = Variable(torch.Tensor())
         all_item_embeds = Variable(torch.Tensor())
         # at_wt = []
-        item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
+        item_embeds_full = self.itemembeds(
+            Variable(torch.LongTensor(item_inputs)))
         for i, j in zip(group_inputs, item_inputs):
             members = self.group_member_dict[int(i)]
-            members_embeds = self.userembeds(Variable(torch.LongTensor(members)))
+            members_embeds = self.userembeds(
+                Variable(torch.LongTensor(members)))
             items_numb1 = []
             for _ in members:
                 items_numb1.append(j)
-            item_embeds1 = self.itemembeds(Variable(torch.LongTensor(items_numb1)))
+            item_embeds1 = self.itemembeds(
+                Variable(torch.LongTensor(items_numb1)))
             items_numb = []
             items_numb.append(j)
-            item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
+            item_embeds = self.itemembeds(
+                Variable(torch.LongTensor(items_numb)))
             at_wt = self.attention(members_embeds, item_embeds1)
-            final_user = (torch.matmul(at_wt.reshape(-1), members_embeds)).reshape((1,32))
+            final_user = (torch.matmul(at_wt.reshape(-1),
+                                       members_embeds)).reshape((1, 50))  # 32
             if all_item_embeds.dim() == 0:
                 all_item_embeds = item_embeds
             else:
@@ -69,20 +75,24 @@ class BILINEAR(nn.Module):
             else:
                 group_embeds = torch.cat((group_embeds, final_user))
         element_embeds = torch.mul(group_embeds, all_item_embeds)
-        new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
+        new_embeds = torch.cat(
+            (element_embeds, group_embeds, all_item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
-        
+
     # user forward
     def usr_forward(self, user_inputs, item_inputs):
 
-        user_inputs_var, item_inputs_var = Variable(user_inputs), Variable(item_inputs)
+        user_inputs_var, item_inputs_var = Variable(
+            user_inputs), Variable(item_inputs)
         user_embeds = self.userembeds(user_inputs_var)
         item_embeds = self.itemembeds(item_inputs_var)
         element_embeds = torch.mul(user_embeds, item_embeds)
-        new_embeds = torch.cat((element_embeds, user_embeds, item_embeds), dim=1)
+        new_embeds = torch.cat(
+            (element_embeds, user_embeds, item_embeds), dim=1)
         y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
+
 
 class UserEmbeddingLayer(nn.Module):
 
@@ -123,18 +133,24 @@ class GroupEmbeddingLayer(nn.Module):
         group_embeds = self.groupEmbedding(num_group)
         return group_embeds
 
+
 class BilinearAttentionLayer(nn.Module):
 
     def __init__(self, embedding_dim_1, embedding_dim_2, embedding_dim_3, drop_ratio=0):
 
         super(BilinearAttentionLayer, self).__init__()
-        self.bilinear =  nn.Bilinear(embedding_dim_1, embedding_dim_2, embedding_dim_3)
-        
+        self.bilinear = nn.Bilinear(
+            embedding_dim_1, embedding_dim_2, embedding_dim_3, bias=False)
 
+        self.linear = nn.Sequential(
+            nn.Linear(embedding_dim_3, embedding_dim_3/2),
+            nn.ReLU(),
+            nn.Linear(embedding_dim_3/2, 1),
+        )
 
     def forward(self, x, y):
 
-        out = self.bilinear(x,y)
+        out = self.linear(self.bilinear(x, y))
         weight = F.softmax(out.view(1, -1), dim=1)
         return out
 

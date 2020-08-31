@@ -4,8 +4,8 @@ class HyperParam(object):
         self.user_dataset = self.path + 'userRating'
         self.group_dataset = self.path + 'groupRating'
         self.user_in_group_path = "./datasets/groupMember.txt"
-        self.embedding_size = 32
-        self.epoch = 100
+        self.embedding_size = 50
+        self.epoch = 60
         self.test_epoch = 5
         self.batch_size = 256
         self.test_batch_size = 256
