@@ -70,6 +70,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         optimizer.step()
 
     if(type_m == 'group'):
+        print(total_loss.item()/counter)
         train_loss_list.append(total_loss.item()/counter)
 
 
@@ -114,7 +115,7 @@ if __name__ == '__main__':
     genres = dataset.gdata
     
     # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
-    '''
+    
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -137,7 +138,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    '''
+    
     # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     noattention = noattention(num_users, num_items, num_group,
