@@ -136,6 +136,7 @@ class MemberLayer(nn.Module):
         super(MemberLayer, self).__init__()
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, int(embedding_dim/3)),
+            nn.Dropout(drop_ratio),
         )
         self.embedding_dim = embedding_dim
 

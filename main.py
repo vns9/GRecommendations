@@ -39,8 +39,8 @@ def training(model, train_loader, epoch_id, config, type_m):
     elif epoch_id >= 20:
         lr = learning_rates[2]
 
-    # if epoch_id % 5 == 0:
-    #     lr /= 2
+    if epoch_id % 5 == 0:
+        lr /= 2
 
     # optimizer
     optimizer = optim.RMSprop(model.parameters(), lr)
@@ -70,7 +70,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         optimizer.step()
 
     if(type_m == 'group'):
-        print(total_loss.item()/counter)
+        #print(total_loss.item()/counter)
         train_loss_list.append(total_loss.item()/counter)
 
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     num_users, num_items = dataset.num_users, dataset.num_items
     genres = dataset.gdata
     
-    # BILINEAR MODEL-----------------------------------------------------------------------------------------------------------------
+    # Proposed -----------------------------------------------------------------------------------------------------------------
     
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     train_loss_list = []
     test_loss_list = []
     
-    # BENCHMARK MODEL-----------------------------------------------------------------------------------------------------------------
+    # Benchmark -----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     noattention = noattention(num_users, num_items, num_group,
                          configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
