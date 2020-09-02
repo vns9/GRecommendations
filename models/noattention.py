@@ -50,28 +50,34 @@ class noattention(nn.Module):
         all_item_embeds = Variable(torch.Tensor())
         item_embeds_full = self.itemembeds(Variable(torch.LongTensor(item_inputs)))
         for i, j in zip(group_inputs, item_inputs):
-            members = self.group_member_dict[int(i)]
-            members_embeds = self.userembeds(Variable(torch.LongTensor(members)))
-            members_embeds = torch.flatten(members_embeds)
+            gmembers = self.group_member_dict[int(i)]
+            members_embeds = self.userembeds(Variable(torch.LongTensor(gmembers)))
+            #members_embeds = members_embeds.reshape((3*self.embedding_dim))
             members_embeds = self.member(members_embeds)
             items_numb = []
             items_numb.append(j)
             item_embeds = self.itemembeds(Variable(torch.LongTensor(items_numb)))
+
+            if all_item_embeds.dim() == 0:
+                all_item_embeds = item_embeds
+            else:
+                all_item_embeds = torch.cat((all_item_embeds, item_embeds))
+
             # #group_item_embeds = torch.cat((members_embeds, item_embeds), dim=1)
             # #at_wt = self.attention(group_item_embeds)
             # g_embeds_with_attention = members_embeds
             # #group_embeds_pure = self.groupembeds(Variable(torch.LongTensor([i])))
             # g_embeds = g_embeds_with_attention #+ group_embeds_pure
-            members_embeds = members_embeds.reshape((1,self.embedding_dim))
+            #members_embeds = members_embeds.reshape((1,self.embedding_dim))
+            #print(members_embeds)
             if group_embeds.dim() == 0:
                 group_embeds = members_embeds
             else:
                 group_embeds = torch.cat((group_embeds, members_embeds))
-        # print(group_embeds.shape)
-        # print(item_embeds_full.shape)
-        element_embeds = torch.mul(group_embeds, item_embeds_full)  # Element-wise product
-        new_embeds = torch.cat((element_embeds, group_embeds, item_embeds_full), dim=1)
-        y = F.sigmoid(self.predictlayer(new_embeds))
+        #print(all_item_embeds)
+        element_embeds = torch.mul(group_embeds, all_item_embeds)  # Element-wise product
+        new_embeds = torch.cat((element_embeds, group_embeds, all_item_embeds), dim=1)
+        y = torch.sigmoid(self.predictlayer(new_embeds))
         return y
         
     # user forward
@@ -131,9 +137,10 @@ class MemberLayer(nn.Module):
         self.linear = nn.Sequential(
             nn.Linear(embedding_dim, int(embedding_dim/3)),
         )
+        self.embedding_dim = embedding_dim
 
     def forward(self, x):
-        out = self.linear(x)
+        out = self.linear(x.reshape(1,self.embedding_dim))
         return out
 
 class BilinearAttentionLayer(nn.Module):
