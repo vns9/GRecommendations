@@ -21,7 +21,7 @@ from dataset import GDataset
 from models.bilinear import BILINEAR
 #from models.bahdanau2 import bahdanau2
 from models.noattention import noattention
-#from models.bahdanauplus import BAHDANAUplus
+from models.noattentionplus import noattentionplus
 
 train_loss_list = []
 test_loss_list = []
@@ -69,7 +69,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         loss.backward()
         optimizer.step()
 
-    if(type_m == 'group'):
+    if(type_m == 'user'):
         #print(total_loss.item()/counter)
         train_loss_list.append(total_loss.item()/counter)
 
@@ -94,7 +94,7 @@ def testing(model, train_loader, epoch_id, config, type_m):
         loss = torch.sqrt(torch.mean((pos_prediction-d_r) ** 2))
         total_loss += loss
         counter += 1
-    if(type_m == 'group'):
+    if(type_m == 'user'):
         test_loss_list.append(total_loss.item()/counter)
 
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     genres = dataset.gdata
     
     # Proposed -----------------------------------------------------------------------------------------------------------------
-    
+    '''
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -138,8 +138,9 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    
+    '''
     # Benchmark -----------------------------------------------------------------------------------------------------------------
+    
     torch.manual_seed(0)
     noattention = noattention(num_users, num_items, num_group,
                          configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -147,15 +148,37 @@ if __name__ == '__main__':
 
     for epoch in range(configuration.epoch):
         noattention.train()
-        #training(bahdanau, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
-        training(noattention, dataset.get_group_dataloader(
-            configuration.batch_size), epoch, configuration, 'group')
+        training(noattention, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(noattention, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
-    # for epoch in range(configuration.test_epoch):
-    #     testing(bahdanau, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+    for epoch in range(configuration.test_epoch):
+         testing(noattention, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
     #     testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
 
     print("No Attention: %.1f s\n" % (time()-t))
+
+    print(train_loss_list)
+    print(test_loss_list)
+
+    train_loss_list = []
+    test_loss_list = []
+    
+    # Benchmark with genres-----------------------------------------------------------------------------------------------------------------
+    torch.manual_seed(0)
+    noattentionplus = noattentionplus(num_users, num_items, num_group,
+                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+    t = time()
+
+    for epoch in range(configuration.epoch):
+        noattentionplus.train()
+        training(noattentionplus, dataset.get_user_dataloader(configuration.batch_size), epoch, configuration, 'user')
+        #training(noattention, dataset.get_group_dataloader(configuration.batch_size), epoch, configuration, 'group')
+
+    for epoch in range(configuration.test_epoch):
+        testing(noattentionplus, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
+    #     testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+
+    print("No Attention + Genres: %.1f s\n" % (time()-t))
 
     print(train_loss_list)
     print(test_loss_list)

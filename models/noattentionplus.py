@@ -6,11 +6,11 @@ from torch.autograd import Variable
 
 from math import e
 
-class noattention(nn.Module):
+class noattentionplus(nn.Module):
 
     def __init__(self, num_users, num_items, num_groups, embedding_dim, group_member_dict, drop_ratio, genres):
 
-        super(noattention, self).__init__()
+        super(noattentionplus, self).__init__()
         self.embedding_dim = embedding_dim
         self.genres = genres
         self.member = MemberLayer(3 * embedding_dim, drop_ratio)
@@ -110,14 +110,13 @@ class ItemEmbeddingLayer(nn.Module):
 
         super(ItemEmbeddingLayer, self).__init__()
         self.genres = genres
-        self.itemEmbedding = nn.Embedding(num_items, embedding_dim)
+        self.itemEmbedding = nn.Embedding(num_items, embedding_dim-18)
 
     def forward(self, item_inputs):
-        
+        '''
         #no genre
         item_embeds = self.itemEmbedding(item_inputs)
         return item_embeds
-        
         '''
         #with genres
         itemGenres = torch.zeros([item_inputs.size()[0], 18])
@@ -131,7 +130,7 @@ class ItemEmbeddingLayer(nn.Module):
         item_embeds = self.itemEmbedding(item_inputs)
         item_embedds = torch.cat([item_embeds, itemGenres], dim=1)
         return item_embedds
-        '''
+        
 
 class GroupEmbeddingLayer(nn.Module):
 
