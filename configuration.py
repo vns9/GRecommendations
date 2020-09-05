@@ -9,5 +9,6 @@ class HyperParam(object):
         self.test_epoch = 5
         self.batch_size = 256
         self.test_batch_size = 256
-        self.lr = [0.000005, 0.000001, 0.000005]
+        #self.lr = [0.000005, 0.000001, 0.000005] FOR ATTENTION MECHANISM
+        self.lr = [0.0005, 0.0001, 0.0005]
         self.drop_ratio = 0.2
