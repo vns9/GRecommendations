@@ -9,13 +9,21 @@ class GDataset(object):
     def __init__(self, user_path, group_path):
 
         # user data
+        
         self.user_trainMatrix = self.load_rating_file_as_matrix(
             user_path + "ctrain.txt")
         self.user_testMatrix = self.load_rating_file_as_matrix(
             user_path + "ctest.txt")
         self.user_Matrix = self.load_rating_file_as_matrix(
             user_path + "SortedMovies.txt")
+        
+        # self.user_trainMatrix = self.load_rating_file_as_matrix(
+        #     user_path + "Train.txt")
+        # self.user_testMatrix = self.load_rating_file_as_matrix(
+        #     user_path + "Test.txt")
         self.num_users, self.num_items = self.user_Matrix.shape
+        # self.num_users = 500
+        # self.num_items = 41000
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
         self.group_trainMatrix = self.load_rating_file_as_matrix(
