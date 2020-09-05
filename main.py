@@ -140,7 +140,7 @@ if __name__ == '__main__':
     test_loss_list = []
     '''
     # Benchmark -----------------------------------------------------------------------------------------------------------------
-    
+    '''
     torch.manual_seed(0)
     noattention = noattention(num_users, num_items, num_group,
                          configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -162,7 +162,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    
+    '''
     # Benchmark with genres-----------------------------------------------------------------------------------------------------------------
     torch.manual_seed(0)
     noattentionplus = noattentionplus(num_users, num_items, num_group,

@@ -110,7 +110,12 @@ class ItemEmbeddingLayer(nn.Module):
 
         super(ItemEmbeddingLayer, self).__init__()
         self.genres = genres
-        self.itemEmbedding = nn.Embedding(num_items, embedding_dim-18)
+        self.hidden = nn.Sequential(
+            nn.Linear(18, 30),
+            nn.Linear(30, 30),
+            nn.Linear(30, 5),
+        )
+        self.itemEmbedding = nn.Embedding(num_items, embedding_dim-5)
 
     def forward(self, item_inputs):
         '''
@@ -128,6 +133,7 @@ class ItemEmbeddingLayer(nn.Module):
                     itemGenres[i][j] = 0
 
         item_embeds = self.itemEmbedding(item_inputs)
+        itemGenres = self.hidden(itemGenres)
         item_embedds = torch.cat([item_embeds, itemGenres], dim=1)
         return item_embedds
         
