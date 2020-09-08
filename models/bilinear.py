@@ -104,6 +104,7 @@ class UserEmbeddingLayer(nn.Module):
     def forward(self, user_inputs):
 
         user_embeds = self.userEmbedding(user_inputs)
+        #print(user_embeds)
         return user_embeds
 
 
