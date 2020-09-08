@@ -23,9 +23,9 @@ class bahdanau2(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                nn.init.normal_(m.weight)
+                nn.init.xavier_normal_(m.weight)
             if isinstance(m, nn.Bilinear):
-                nn.init.normal_(m.weight)
+                nn.init.xavier_normal_(m.weight)
             if isinstance(m, nn.Embedding):
                 nn.init.xavier_normal_(m.weight)
                 
