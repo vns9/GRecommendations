@@ -15,7 +15,7 @@ class noattentionplus(nn.Module):
         self.genres = genres
         self.member = MemberLayer(3 * embedding_dim, drop_ratio)
         self.userembeds = UserEmbeddingLayer(num_users, embedding_dim)
-        self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres)
+        self.itemembeds = ItemEmbeddingLayer(num_items, embedding_dim, genres, drop_ratio)
         self.groupembeds = GroupEmbeddingLayer(num_groups, embedding_dim)
         self.attention = BilinearAttentionLayer(2 * embedding_dim, drop_ratio)
         self.predictlayer = PredictLayer(3 * embedding_dim, drop_ratio)
@@ -106,14 +106,14 @@ class UserEmbeddingLayer(nn.Module):
 
 class ItemEmbeddingLayer(nn.Module):
 
-    def __init__(self, num_items, embedding_dim, genres):
+    def __init__(self, num_items, embedding_dim, genres, drop_ratio):
 
         super(ItemEmbeddingLayer, self).__init__()
         self.genres = genres
         self.hidden = nn.Sequential(
             nn.Linear(18, 30),
-            nn.Linear(30, 30),
             nn.Linear(30, 5),
+            # nn.Linear(30, 5),
         )
         self.itemEmbedding = nn.Embedding(num_items, embedding_dim-5)
 

@@ -22,8 +22,8 @@ class GDataset(object):
         # self.user_testMatrix = self.load_rating_file_as_matrix(
         #     user_path + "Test.txt")
         self.num_users, self.num_items = self.user_Matrix.shape
-        # self.num_users = 500
-        # self.num_items = 41000
+        #self.num_users = 50
+        #self.num_items = 41000
         self.gdata = self.load_genre_file_as_tensors(group_path+"Genre.txt")
         # group data
         self.group_trainMatrix = self.load_rating_file_as_matrix(
