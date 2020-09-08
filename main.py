@@ -75,7 +75,7 @@ def training(model, train_loader, epoch_id, config, type_m):
         #torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
         optimizer.step()
 
-    if(type_m == 'user'):
+    if(type_m == 'group'):
         #print(total_loss.item()/counter)
         train_loss_list.append(total_loss.item()/counter)
 
