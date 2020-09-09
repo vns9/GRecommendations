@@ -121,7 +121,7 @@ if __name__ == '__main__':
     genres = dataset.gdata
     
     # Proposed -----------------------------------------------------------------------------------------------------------------
-    '''
+    
     torch.manual_seed(0)
     bilinear = BILINEAR(num_users, num_items, num_group,
                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
@@ -147,7 +147,7 @@ if __name__ == '__main__':
 
     train_loss_list = []
     test_loss_list = []
-    '''
+    
     # Bahdanau -----------------------------------------------------------------------------------------------------------------
     
     torch.manual_seed(0)

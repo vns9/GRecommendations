@@ -13,7 +13,7 @@ class HyperParam(object):
         # self.test_batch_size = 1
         #self.test_batch_size = 5
         # self.lr = [0.000005, 0.000001, 0.000005] #FOR ATTENTION MECHANISM
-        self.lr = [0.000005, 0.000005, 0.000005] #FOR ATTENTION MECHANISM
-        #self.lr = [0.0005, 0.0001, 0.0005] #FOR ATTENTION MECHANISM
+        #self.lr = [0.000005, 0.000005, 0.000005] #FOR ATTENTION MECHANISM
+        self.lr = [0.0005, 0.0005, 0.0005] #FOR ATTENTION MECHANISM
         # self.lr = [0.005, 0.001, 0.005]
         self.drop_ratio = 0.2
