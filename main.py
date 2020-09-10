@@ -126,7 +126,7 @@ if __name__ == '__main__':
     bilinear = BILINEAR(num_users, num_items, num_group,
                         configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
 
-    #torch.save(bilinear, 'trained-models/bilinear')
+    
     
     t = time()
     
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     # for epoch in range(configuration.test_epoch):
         #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
         #testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
+    torch.save(bilinear, 'trained-bilinear')
     print("Bilinear without learning embeddings: %.1f s\n" % (time()-t))
 
     print(train_loss_list)
@@ -153,6 +153,8 @@ if __name__ == '__main__':
     torch.manual_seed(0)
     bahdanau2 = bahdanau2(num_users, num_items, num_group,
                          configuration.embedding_size, g_m_d, configuration.drop_ratio, genres)
+
+
     t = time()
 
     for epoch in range(configuration.epoch):
@@ -163,7 +165,7 @@ if __name__ == '__main__':
     #for epoch in range(configuration.test_epoch):
     #    testing(noattention, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
     #     testing(bahdanau, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
-
+    torch.save(bahdanau2, 'trained-bahdanau2')
     print("Bahdanau without learning embeddings: %.1f s\n" % (time()-t))
 
     print(train_loss_list)
