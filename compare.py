@@ -81,7 +81,7 @@ def training(model, train_loader, epoch_id, config, type_m):
 
 
 # test the model
-def testing(model, train_loader, epoch_id, config, type_m):
+def testing(model, train_loader, config, type_m):
 
     total_loss = 0
     counter = 0
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     
     #for epoch in range(configuration.test_epoch):
         #testing(bilinear, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-    testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+    testing(bilinear, dataset.get_group_test_dataloader(configuration.batch_size), configuration, 'group')
     # torch.save(bilinear, 'trained-bilinear')
     # print("Bilinear without learning embeddings: %.1f s\n" % (time()-t))
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     #for epoch in range(configuration.test_epoch):
         #testing(noattention, dataset.get_user_test_dataloader(configuration.batch_size), epoch, configuration, 'user')
-    testing(bahdanau2, dataset.get_group_test_dataloader(configuration.batch_size), epoch, configuration, 'group')
+    testing(bahdanau2, dataset.get_group_test_dataloader(configuration.batch_size), configuration, 'group')
     # torch.save(bahdanau2, 'trained-bahdanau2')
     # print("Bahdanau without learning embeddings: %.1f s\n" % (time()-t))
 
