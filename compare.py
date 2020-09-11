@@ -26,6 +26,8 @@ from models.bahdanau2 import bahdanau2
 train_loss_list = []
 test_loss_list = []
 
+torch.set_printoptions(threshold=10000)
+
 # train the model
 
 
