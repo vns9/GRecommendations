@@ -97,11 +97,13 @@ def testing(model, train_loader, epoch_id, config, type_m):
             pos_prediction = model(user_input, None, pos_item_input)
         print("ITEM IDS- ")
         print(pi_ni)
-        print("RATING DIFFERENCE - ")
-        print(100*(pos_prediction-d_r))
+        
         d_r = r.double()
         d_r = d_r/5  # ratings given in stars out of 5
         loss = torch.sqrt(torch.mean(((100*(pos_prediction-d_r)) ** 2)))
+        
+        print("RATING DIFFERENCE - ")
+        print(100*(pos_prediction-d_r))
         total_loss += loss
         counter += 1
     if(type_m == 'group'):
